@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>IFE JavaScript Task 01</title>
+    <style type="text/css">
+      #wrap div{
+        border: 1px solid #bbb;
+        background: #FF8888;
+        height: 30px;
+        line-height: 30px;
+        font-size: 15px;
+        text-align: center;
+        vertical-align: center;
+        float:left;
+        margin-left:5px;
+        color: white;
+        padding: 0 10px;
+      }
+      #wrap div.filt{
+        background: green;
+        color: white;
+      }
+    </style>
+  </head>
+<body>
+  <textarea cols="30" rows="10"></textarea>
+  <input type="button" value='左侧入'></input>
+  <input type="button" value='右侧入' style="margin-right: 25px"></input>
+  <input type="button" value='左侧出'></input>
+  <input type="button" value='右侧出' style="margin-right: 25px"></input><br/>
+  <input type="text"></input><input type="button" value='搜索'> </input>
+
+
+
+  <div id='wrap'>
+    
+  </div>
+</body>
+<script type="text/javascript">
+
+/**
+ * addEventHandler方法
+ * 跨浏览器实现事件绑定
+ */
+function addEventHandler(ele, event, hanlder) {
+    if (ele.addEventListener) {
+        ele.addEventListener(event, hanlder, false);
+    } else if (ele.attachEvent) {
+        ele.attachEvent("on"+event, hanlder);
+    } else  {
+        ele["on" + event] = hanlder;
+    }
+}
+
+function each(arr,fn,filter){
+  for(var i=0,l=arr.length;i<l;i++){
+    fn(arr[i],filter);
+  }
+}
+
+window.onload=function(){
+  var oWrap=document.getElementById('wrap');
+  var buttonList = document.getElementsByTagName("input");
+  var textarea=document.getElementsByTagName('textarea')[0];
+
+  var queue={
+    str:[],
+
+    leftPush:function(num){
+      this.str.unshift(num);
+      this.paint();
+    },
+    rightPush:function(num){
+      this.str.push(num);
+      this.paint();
+    },
+    leftPop:function(){
+      if(!this.isEmpty()){
+        alert(this.str.shift());
+        this.paint();
+      }else{
+        alert("The queue is already empty!")
+      }
+    },
+    rightPop:function(){
+      if(!this.isEmpty()){
+        alert(this.str.pop());
+        this.paint();
+      }else{
+        alert("The queue is already empty!")
+      }
+    },
+    isEmpty:function(){
+      return (this.str.length==0);
+    },
+    paint:function(){
+      var html="";
+      each(this.str,function(item){html += ("<div>" + item + "</div>")})
+      wrap.innerHTML=html;
+      addDivDelEvent();
+    },
+    deleteID:function(id){
+      console.log(id);
+      this.str.splice(id,1);
+      this.paint();
+    },
+    search:function(SearItem){
+      var filter=this.str.filter(function(item,index,array){return item.indexOf(SearItem)!==-1;});
+      var html="";
+      for(var i=0,l=this.str.length;i<l;i++){
+          if(filter.indexOf(this.str[i])===-1){
+            html += ("<div>" + this.str[i] + "</div>")
+          }else{
+            html += ("<div class='filt'>" + this.str[i] + "</div>")
+          }
+      }
+      wrap.innerHTML=html;
+      addDivDelEvent();   
+    }
+  };
+//这里要使用闭包，否则永远绑定到指定div上的delete函数的参数永远等于跳出时的cur值(length);
+  function addDivDelEvent(){
+    for(var i=0,l=wrap.childNodes.length;i<l;i++){
+      addEventHandler(wrap.childNodes[i],'click',function(cur){
+        return function(){return queue.deleteID(cur)};
+      }(i));
+    }
+  }
+
+//为4个按钮绑定函数
+    addEventHandler(buttonList[0], "click", function() {
+        var input = textarea.value;
+        if ((/\S+/).test(input)) {
+            var arr=input.split(/[^0-9a-zA-Z\u4e00-\u9fa5]+/);
+            for(var i=0,l=arr.length;i<l;i++){
+              queue.leftPush(arr[i]);
+            }
+        }
+        else {
+            alert("Please enter a not null value!");
+        }
+    });
+    addEventHandler(buttonList[1], "click", function() {
+        var input = textarea.value;
+        if ((/\S+/).test(input)) {
+            var arr=input.split(/[*,，、\r\n\s]/);
+            for(var i=0,l=arr.length;i<l;i++){
+              queue.rightPush(arr[i]);
+            }
+        }
+        else {
+            alert("Please enter a not null value!");
+        }
+    });
+    addEventHandler(buttonList[2], "click", function(){queue.leftPop()});
+    addEventHandler(buttonList[3], "click", function(){queue.rightPop()});
+    addEventHandler(buttonList[5], "click", function(){queue.search(buttonList[4].value)});
+
+
+};
+
+</script>
+</html>

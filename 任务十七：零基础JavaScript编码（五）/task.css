@@ -1,0 +1,32 @@
+#wrap{
+	border:3px solid #aaa;
+	*zoom:1;
+}
+#wrap:after{
+	content:"";
+	display: block;
+	height: 0;
+	overflow: hidden;
+	clear:both; 
+}
+#wrap div{
+	position: relative;
+	width: auto;
+	height: 550px;
+	float:left;
+}
+#wrap div a{
+	position: absolute;
+	display: block;
+	bottom:0;
+	border-radius: 2px;
+}
+#wrap div:nth-child(3n) a{
+	background: red;
+}
+#wrap div:nth-child(3n+1) a{
+	background: green;
+}
+#wrap div:nth-child(3n+2) a{
+	background: blue;
+}

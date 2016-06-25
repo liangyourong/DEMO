@@ -1,0 +1,191 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>IFE JavaScript Task 21</title>
+    
+        <style>
+            #tag-container div {
+                display: inline-block;
+                font-size: 30px;
+                text-align: center;
+                padding: 0 15px;
+                margin: 2px 0;
+                margin-right: 10px;
+                height: 50px;
+                line-height: 50px;                
+                background-color: red;
+                color: #FFFFFF;
+            }
+            
+            #hobby-container div {
+                display: inline-block;
+                font-size: 30px;
+                text-align: center;
+                padding: 0 15px;
+                margin: 2px 0;
+                margin-right: 10px;
+                height: 50px;
+                line-height: 50px;                
+                background-color: red;
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div>Tag:<input type="text" id="tag-input"></div>
+        <br>
+        <div id="tag-container">
+        
+        </div>
+        
+        <textarea id="hobby-input">江蛤蛤，蛤三篇,哈斯、蛤啤   蛤宝 大新闻 华莱士</textarea>
+        <br>
+        <input type="button" id="hobby-submit" value="确认兴趣爱好">
+        <br>
+        <div id="hobby-container">
+
+        </div>
+    </body>
+
+    <script type="text/javascript">
+    function addEvent(element,event,listener){
+      try{
+        element.addEventListener(event,listener,false);
+      }catch(e){
+        try{
+          element.attachEvent("on"+event,listener);
+        }catch(e){
+          element["on"+event]=listener;
+        }
+      }
+    }
+
+    function each(arr,fn){
+      for(var cur=0,l=arr.length;cur<l;cur++){
+        fn(arr[cur],cur);
+      }
+    }
+
+    function splitInput(text){
+      var splitArr=[];
+      splitArr=text.split(/[，；、,;\n\s]+/);
+        return splitArr;
+    }
+
+    function trim(str) {
+      var regex1=/^\s*/;
+      var regex2=/\s*$/;
+      return str.replace(regex1,"").replace(regex2,"");
+    }
+    function Queue(container, isDelDiv) {
+        this.str=[];
+        this.leftPush=function(obj){
+          if(obj.length){
+            this.str.unshift(obj);
+            this.paint();
+          }
+        };
+        this.rightPush=function(obj){
+          if(obj.length){
+            this.str.push(obj);
+            this.paint();
+          }
+        };
+        this.isEmpty=function(){
+          return (this.str.length==0);
+        };
+        this.leftPop=function(){
+          if(!this.isEmpty()){
+            this.str.shift();
+            this.paint();
+          }else{
+            alert("The queue is already empty!");
+          }
+        };
+        this.rightPop=function(){
+          if(!this.isEmpty()){
+            this.str.pop();
+            this.paint();
+          }else{
+            alert("The queue is already empty!");
+          }
+        };
+        this.paint=function(){
+          var htmlStr="";
+          each(this.str,function(item){htmlStr+= ("<div>"+item+"</div>");});
+          container.innerHTML=htmlStr;
+          if(isDelDiv) addDivDelEvent(this, container);
+        };
+        this.deleteID=function(id){
+          this.str.splice(id,1);
+          this.paint();
+        };
+
+    }
+
+    function addDivDelEvent(Queue, container) {
+      var temp = [];
+      for(var cur=0,l=container.childNodes.length;cur<l;cur++){
+        temp[cur]=container.childNodes[cur].innerHTML;
+        addEvent(container.childNodes[cur],"click",function(cur){
+          return function(){Queue.deleteID(cur);};
+        }(cur));
+        addEvent(container.childNodes[cur],"mouseover",function(cur){
+          return function(){
+            container.childNodes[cur].style.backgroundColor="green";
+            container.childNodes[cur].innerHTML="delete" +temp[cur]+"?";
+          };
+        }(cur));
+        addEvent(container.childNodes[cur],"mouseout",function(cur){
+          return function(){
+            container.childNodes[cur].style.backgroundColor="red";
+            container.childNodes[cur].innerHTML=temp[cur];
+          };
+        }(cur));
+
+      }
+    }
+
+    window.onload=function(){
+
+        var tagContainer = document.getElementById("tag-container");
+        var tagInput = document.getElementById("tag-input");
+        var hobbyContainer = document.getElementById("hobby-container");
+        var hobbyButton = document.getElementById("hobby-submit");
+        var hobbyInput = document.getElementById("hobby-input");
+
+        var tagQueue = new Queue(tagContainer, true);
+        addEvent(tagInput,"keyup",function(e){
+          if(/[,;\s\n，；、]/.test(tagInput.value)||e.keyCode===13){
+            var handledData=splitInput(trim(tagInput.value));
+            var data=handledData[0];
+            if(tagQueue.str.indexOf(data)===-1){
+              tagQueue.rightPush(data);
+              if(tagQueue.str.length>10){
+                tagQueue.leftPop();
+              }
+            }
+            tagQueue.paint();
+            tagInput.value="";
+          }
+        });
+
+        var hobbyQueue = new Queue(hobbyContainer, false);
+        addEvent(hobbyButton, "click", function() {
+        var input = each(splitInput(trim(hobbyInput.value)), function(item, index) {
+           if (hobbyQueue.str.indexOf(item) === -1) {
+                hobbyQueue.rightPush(item);
+                if (hobbyQueue.str.length > 10) {
+                    hobbyQueue.leftPop();
+                }
+            } 
+        });
+        hobbyQueue.paint();
+
+    });
+    };
+
+    </script>
+</html>       

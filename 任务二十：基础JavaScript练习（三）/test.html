@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>IFE JavaScript Task 01</title>
+    <style type="text/css">
+      #wrap div{
+        border: 1px solid #bbb;
+        background: #FF8888;
+        height: 30px;
+        line-height: 30px;
+        font-size: 15px;
+        text-align: center;
+        vertical-align: center;
+        float:left;
+        margin-left:5px;
+        color: white;
+        padding: 0 10px;
+      }
+    </style>
+  </head>
+<body>
+<textarea cols="30" rows="10"></textarea>
+<button >alert</button>
+</body>
+<script type="text/javascript">
+
+window.onload=function(){
+  var text=document.getElementsByTagName('textarea')[0];
+  var button=document.getElementsByTagName('button')[0];
+  button.onclick=function(){
+    var str=text.value;
+    var arr=str.split(/[*,，、\r\n\s]/);
+    var filterArr=arr.filter(function(item,index,array){return item.indexOf("a")!==-1;});
+    for(var i=0,l=filterArr.length;i<l;i++){
+      alert(filterArr[i]);
+    }
+  }
+};
+
+</script>
+</html>

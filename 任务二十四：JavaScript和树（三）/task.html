@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Binary Tree</title>
+    <style type="text/css">
+        [class*='level-']{
+            border:1px solid #593c7f;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #fff;
+            padding: 0 5px;
+            margin: 0 5px; 
+        }
+.level-1 {
+  height: 150px; }
+
+.level-2 {
+  height: 120px; }
+
+.level-3 {
+  height: 90px; }
+
+.level-4 {
+  height: 60px; }
+
+.level-5 {
+  height: 30px; }
+
+#box-container,
+#traverse-container,
+#search-container,
+#insert-delete {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px; }
+
+input {
+  margin: 0 5px; }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+    <div id="box-container">
+        <div class="level-1" id="top-level">Super
+            <div class="level-2">Co
+                <div class="level-3">Apple
+                    <div class="level-4">Pear</div>
+                    <div class="level-4">Pig</div>
+                    <div class="level-4">Cola</div>
+                    <div class="level-4">Soccer</div>
+                </div>
+                <div class="level-3">Phone</div>
+                <div class="level-3">
+                    <div class="level-4">Book</div>
+                    <div class="level-4">School</div>
+                </div>
+            </div>
+            <div class="level-2">Note
+                <div class="level-3">Human
+                    <div class="level-4">Code</div>
+                    <div class="level-4">Operate</div>
+                    <div class="level-4">Man</div>
+                </div>
+                <div class="level-3">Program
+                    <div class="level-4">Element
+                        <div class="level-5">Cat</div>
+                    </div>
+                    <div class="level-4">Glass</div>
+                </div>
+            </div>
+            <div class="level-2">Fish</div>
+        </div>
+    </div>
+
+    <div id="insert-delete">
+        <input type="button" value="删除选中节点及其所有子节点" id="delete-btn">
+        <input type="text" id="insert-txt" placeholder="新添加节点的内容">
+        <input type="button" value="在选中节点下增加子节点" id="insert-btn">
+    </div>
+    <div id="traverse-container">
+    	<input type="button" value="深度遍历多叉树" id="preorder">
+        <input type="button" value="广度度遍历多叉树" id="BFpreorder">
+    </div>
+
+    <div id="search-container">
+        <input type="text" id="search-txt" placeholder="要查询的内容">
+        <input type="button" value="深度查询" id="search-btn">&nbsp;
+        <input type="button" value="广度查询" id="BFsearch-btn">
+    </div>
+</div>
+	
+<script type="text/javascript">
+    var traverse=[];
+    var timer;
+    var search=[];
+    var selectDiv;//记录选中的box
+
+    // 深度优先遍历
+    function traverseDF(tree){
+        if(tree!==null)
+            traverse.push(tree);
+        for(var i=0,l=tree.children.length;i<l;i++){
+            traverseDF(tree.children[i]);
+        }
+    }
+    var BFindex = 0;//广度优先遍历自增标识符
+    //广度优先遍历
+    function traverseBF(tree) {
+        if(tree){
+            traverse.push(tree);
+            traverseBF(tree.nextElementSibling);
+            tree=traverse[BFindex++];
+            traverseBF(tree.firstElementChild);
+        }
+    }
+
+    //清理前一个遍历或搜索
+    function clearResult(){
+        var allDiv=document.getElementsByTagName('div');
+        for(var i=0,l=allDiv.length;i<l;i++){
+            allDiv[i].style.backgroundColor='#fff';
+        }
+        clearInterval(timer);
+        traverse=[];
+        search=[];
+        tag=true;
+    }
+
+    //深度优先搜索树
+    var tag=true;
+    function searchTree(tree,content){
+        var equal=(tree.innerHTML.split('<')[0].replace(/(^\s+)|(\s+$)/g,"")===content);
+        if(!equal&&tag){
+            search.push(tree);
+            for(var i=0,l=tree.children.length;i<l;i++){
+                searchTree(tree.children[i],content);
+            }
+        }else if(equal){
+            search.push(tree);
+            tag=false;
+            return;
+        }
+    }
+    //广度优先搜索树
+    function BFsearchTree(tree,content){
+        BFindex = 0;
+        traverseBF(tree);
+        for(var i=0,l=traverse.length;i<l;i++){
+            if(traverse[i].innerHTML.split('<')[0].replace(/(^\s+)|(\s+$)/g,"")===content){
+                search.push(traverse[i]);
+                tag=false;
+                return;
+            }else{
+                search.push(traverse[i]);
+            }
+        } 
+    }
+
+    //动画
+    function animate(result,searchOrTraverse){
+        var i=0;
+        result[i].style.backgroundColor='#fec8b0';
+        timer=setInterval(function(){
+            i++
+            if(i<result.length){
+                result[i-1].style.backgroundColor='#fff';
+                result[i].style.backgroundColor='#fec8b0';
+            }else if(searchOrTraverse===1){
+                clearInterval(timer);
+                result[result.length-1].style.backgroundColor='#fff';
+            }else if(searchOrTraverse===2){
+                clearInterval(timer);
+                result[result.length-1].style.backgroundColor='#fff';
+                alert('没查询到该搜索内容');
+            }else if(searchOrTraverse===3){
+                clearInterval(timer);
+                result[result.length-1].style.backgroundColor='#593c7f';
+            }
+        },500);
+    }
+
+    window.onload=function(){
+        var top=document.getElementById('top-level');
+
+        document.getElementById('preorder').onclick=function(){
+            clearResult();
+            traverseDF(top);
+            animate(traverse,1);
+        };
+        document.getElementById('BFpreorder').onclick=function(){
+            clearResult();
+            BFindex = 0;
+            traverseBF(top);
+            animate(traverse,1);
+        };
+        document.getElementById('search-btn').onclick=function(){
+            var content=document.getElementById('search-txt').value;
+             if (content === '') {
+            alert('请填写要搜索的内容');
+            } else {
+                clearResult();
+                searchTree(top,content);
+                if(tag)//无该搜索结果
+                    animate(search,2);
+                else//查询成功
+                    animate(search,3);
+            }
+        };
+        document.getElementById('BFsearch-btn').onclick=function(){
+            var content=document.getElementById('search-txt').value;
+             if (content === '') {
+            alert('请填写要搜索的内容');
+            } else {
+                clearResult();
+                BFsearchTree(top,content);
+                if(tag)//无该搜索结果
+                    animate(search,2);
+                else//查询成功
+                    animate(search,3);
+            }
+        };
+
+
+        //事件委托
+        document.getElementById('box-container').onclick=function(ev){
+            var ev = ev || window.event;
+            var target = ev.target || ev.srcElement;
+            clearResult();
+            target.style.backgroundColor='#fef9d1';
+            selectDiv=target;
+        };
+        //删除选中box及其子节点
+        document.getElementById('delete-btn').onclick=function(){
+            if(selectDiv===undefined){
+                alert('请先选中要删除的节点');
+            }else{
+                var parent=selectDiv.parentNode;
+                parent.removeChild(selectDiv);
+            }
+        };
+            //在选中节点下增加子节点
+    document.getElementById('insert-btn').onclick = function(){
+            var content = document.getElementById('insert-txt').value;
+            if(content === ''){
+                alert('请填写新增节点的内容');
+            }else if(selectDiv === undefined){
+                alert('请先选中要操作的节点');
+            }else{
+                var newDiv = document.createElement('div');
+                newDiv.innerHTML = content;
+                newDiv.className = 'level-';
+                selectDiv.appendChild(newDiv);
+            }
+        }
+    };
+</script>
+</body>
+    
+</html>

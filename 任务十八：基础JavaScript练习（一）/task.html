@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>IFE JavaScript Task 01</title>
+    <style type="text/css">
+      #wrap div{
+        border: 1px solid #bbb;
+        background: #FF8888;
+        height: 30px;
+        line-height: 30px;
+        font-size: 15px;
+        text-align: center;
+        vertical-align: center;
+        float:left;
+        margin-left:5px;
+      }
+    </style>
+  </head>
+<body>
+  <input type="text" id="num"></input>
+  <input type="button" value='左侧入' id="leftIn"></input>
+  <input type="button" value='右侧入' id="rightIn"></input>
+  <input type="button" value='左侧出' id="leftOut"></input>
+  <input type="button" value='右侧出' id="rightOut"></input>
+
+  <div id='wrap'>
+    
+  </div>
+</body>
+<script type="text/javascript">
+
+/**
+ * addEventHandler方法
+ * 跨浏览器实现事件绑定
+ */
+function addEventHandler(ele, event, hanlder) {
+    if (ele.addEventListener) {
+        ele.addEventListener(event, hanlder, false);
+    } else if (ele.attachEvent) {
+        ele.attachEvent("on"+event, hanlder);
+    } else  {
+        ele["on" + event] = hanlder;
+    }
+}
+
+function insertAfter(newElement,targetElement){
+  var parent=targetElement.parentNode;
+  if(parentNode.lastChild == targetElement){
+    parent.appendChild(newElement);
+  }else{
+    parent.insertBefore(newElement,targetElement.nextSibling);
+  }
+}
+
+var wrap=document.getElementById('wrap');
+function createDiv(){
+  var dom=document.getElementById('num');
+  var num=dom.value;
+  dom.value="";
+  if(num=="") return;
+  var div =document.createElement('div');
+  div.innerHTML=num; 
+  return div;
+}
+
+function LIn(){
+  var div =createDiv();
+  if(num=="") return;
+  if(wrap.children.length===0){
+    wrap.appendChild(div);
+  }else{
+    wrap.insertBefore(div,wrap.firstChild);
+  }
+}
+function RIn(){
+  var div =createDiv();
+  if(num=="") return;
+  wrap.appendChild(div);
+}
+function LOut(){
+  if(wrap.children.length==0)return ;
+  var div=wrap.firstChild;
+  alert(div.innerHTML);
+  wrap.removeChild(div);
+}
+
+function ROut(){
+  if(wrap.children.length==0)return ;
+  var div=wrap.lastChild;
+  alert(div.innerHTML);
+  wrap.removeChild(div);
+}
+function remove(event) {
+  // do sth.
+  var event=event||window.event;
+  var target=event.target||event.srcElement;
+  wrap.removeChild(target);
+}
+
+window.onload=function(){
+  var leftIn=document.getElementById('leftIn');
+  var leftOut=document.getElementById('leftOut');
+  var rightIn=document.getElementById('rightIn');
+  var rightOut=document.getElementById('rightOut');
+  var wrap=document.getElementById('wrap');
+  addEventHandler(leftIn,'click',LIn);
+  addEventHandler(leftOut,'click',LOut);
+  addEventHandler(rightIn,'click',RIn);
+  addEventHandler(rightOut,'click',ROut);
+  addEventHandler(wrap,'click',function(event){
+    if(event.target.nodeName.toLowerCase() === 'div') 
+      remove(event);
+  });
+}
+
+</script>
+</html>
