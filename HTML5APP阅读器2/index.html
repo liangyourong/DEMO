@@ -514,20 +514,16 @@
 					};
 
 					var getCurChapterContent=function(chapter_id,callback){
-						$.get('data/data'+chapter_id+'.json',function(data){
-							if(data.result==0){
-								var url=data.jsonp;
+								var url='data/chapterData'+Chapter_id+'.json';
 								Util.getJSON(url,function(data){
 									callback&&callback(data);
 								});
-							}
-						},'json')
 					}
 
 					var getCurChapterContentPromise=function(){
 						return new Promise(function(resolve,reject){
 									//修改地方
-								var url='data/chapterData'+Chapter_id+'.json'
+								var url='data/chapterData'+Chapter_id+'.json';
 								Util.getJSON(url,function(data){
 								resolve(data);
 								});
