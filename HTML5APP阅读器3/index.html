@@ -514,7 +514,7 @@
 					};
 
 					var getCurChapterContent=function(chapter_id,callback){
-								var url='data/chapterData'+Chapter_id+'.json';
+								var url='data/chapterData'+chapter_id+'.json';
 								Util.getJSON(url,function(data){
 									callback&&callback(data);
 								});

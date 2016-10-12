@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>目录</title>
+  <meta charset="UTF-8">
+  <style type="text/css">
+  *{
+  	background: #e9dfc7;
+  	font-family: "微软雅黑";
+  }
+  	h1{
+  		text-align: center;
+  		font-size: 3em;
+  	}
+  	ul{
+  		width: 100%;
+  		
+  	}
+	li{
+		padding-left: 0;
+		padding-bottom: 5px;
+		list-style: none;
+		font-size: 1.5em;
+	}
+	li a{
+		text-decoration: none;
+		color: #000;
+	}
+	li a:hover{
+		text-decoration: underline;
+		color: #f58801;
+	}
+  </style>
+</head>
+<body>
+	<h1>目录</h1>
+	<ul id="category">
+		
+	</ul>
+	<script src="lib/zepto.min.js"></script>
+		<script>
+			window.jQuery = $;
+		</script>
+	<script type="text/javascript">
+	var chapters;
+	var getFictionInfo=function(callback){
+			$.get('data/chapter.json',function(data){
+				//todo 获得章节信息之后的回调
+				chapters=data.chapters;
+				callback&&callback();
+			},'json');
+		};
+	getFictionInfo(function(){
+		console.log(chapters)
+		var ca=document.getElementById("category");
+		for(var i=0;i<chapters.length;i++){
+			if(i!=3)
+				ca.innerHTML+="<li><a href='#'>"+chapters[i].title+"</a></li>"
+			else
+				ca.innerHTML+="<li><a href='index3.html'>"+chapters[i].title+"</a></li>"
+		}
+
+	});
+	
+	</script>
+</body>
+</html>

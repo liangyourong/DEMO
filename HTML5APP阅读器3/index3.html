@@ -399,6 +399,7 @@
 					top_nav:$('#top-nav'),
 					bottom_nav:$('.bottom_nav'),
 					font_container:$('.font-container'),
+					menu_button:$('#menu_button'),
 					font_button:$('#font-button'),
 					bk_container : $('#bk-container')
 				};
@@ -488,6 +489,14 @@
 						})
 					}
 
+					var parseUrl=function(url){
+						var arr1=url.split('?')[1];
+						if(arr1==undefined)
+							return 0;
+						var result=arr1.split('=')[1]
+						return result;
+					}
+
 					//to do 实现和阅读器相关的数据交互的方法
 					var getFictionInfo=function(callback){
 						$.get('data/chapter.json',function(data){
@@ -503,8 +512,17 @@
 							$.get('data/chapter.json',function(data){
 								//todo 获得章节信息之后的回调
 								if(data.result==0){
-									Chapter_id=Util.StorageGetter('Chapter_id');
-									if(Chapter_id==undefined)Chapter_id=data.chapters[1].chapter_id;
+									var id=parseInt(parseUrl(window.location.href));
+
+									//先从URL从章节数，没有就从localStorage中取章节数，再没有就取1
+									if(id>=1&&id<=4){
+										Chapter_id=id;
+										Util.StorageSetter('Chapter_id',Chapter_id);
+									}
+									if(id==0||(id>4)||(id<0)){
+										Chapter_id=Util.StorageGetter('Chapter_id');
+										if(Chapter_id==undefined)Chapter_id=data.chapters[1].chapter_id;
+									}
 									resolve();
 								}else{
 									reject();
@@ -514,7 +532,7 @@
 					};
 
 					var getCurChapterContent=function(chapter_id,callback){
-								var url='data/chapterData'+Chapter_id+'.json';
+								var url='data/chapterData'+chapter_id+'.json';
 								Util.getJSON(url,function(data){
 									callback&&callback(data);
 								});
@@ -539,6 +557,7 @@
 						Chapter_id=Chapter_id+1;
 						Util.StorageSetter('Chapter_id',Chapter_id);
 						getCurChapterContent(Chapter_id,UIcallback);
+						document.documentElement.scrollTop = document.body.scrollTop =0;  //每次点击下一章后回到顶部
 					}
 
 					var preChapter=function(UIcallback){
@@ -548,6 +567,7 @@
 						Chapter_id=Chapter_id-1;
 						Util.StorageSetter('Chapter_id',Chapter_id);
 						getCurChapterContent(Chapter_id,UIcallback);
+						document.documentElement.scrollTop = document.body.scrollTop =0; //每次点击上一章后回到顶部
 					}
 
 					return {
@@ -605,6 +625,15 @@
 							Dom.font_button.removeClass('current');
 						}
 					});
+
+					//返回目录
+					Dom.menu_button.click(function(){
+						window.location.href='category.html';
+					})
+					//返回书架
+					Dom.top_nav.click(function(){
+						window.location.href='library.html';
+					})
 
 					$('#night-button').click(function(){
 						//todo 触发背景切换的事件

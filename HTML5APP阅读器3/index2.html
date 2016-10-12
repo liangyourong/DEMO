@@ -500,38 +500,58 @@
 
 					var getFictionInfoPromise=function(){
 						return new Promise(function(resolve,reject){
+							/*
 							$.get('data/chapter.json',function(data){
+								console.log(data);
 								//todo 获得章节信息之后的回调
 								if(data.result==0){
-									Chapter_id=Util.StorageGetter('Chapter_id');
-									if(Chapter_id==undefined)Chapter_id=data.chapters[1].chapter_id;
-									resolve();
-								}else{
-									reject();
-								}
+								Chapter_id=Util.StorageGetter('Chapter_id');
+								if(Chapter_id==undefined)Chapter_id=data.chapters[1].chapter_id;
+								resolve();
+							}else{
+								reject();
+							}
 						},'json');
+						*/
+
+								$.jsonp({
+										url:'data/chapter.json',
+										success:function(data){
+											var data=JSON.parse(data);
+											console.log(data);
+										}
+								});
 						});
 					};
 
 					var getCurChapterContent=function(chapter_id,callback){
-								var url='data/chapterData'+Chapter_id+'.json';
+						$.get('data/data'+chapter_id+'.json',function(data){
+							if(data.result==0){
+								var url=data.jsonp;
 								Util.getJSON(url,function(data){
 									callback&&callback(data);
 								});
-
+							}
+						},'json')
 					}
 
+					/*
 					var getCurChapterContentPromise=function(){
 						return new Promise(function(resolve,reject){
-									//修改地方
-								var url='data/chapterData'+Chapter_id+'.json'
-								Util.getJSON(url,function(data){
-								resolve(data);
-								});
-
+							$.get('data/data'+Chapter_id+'.json',function(data){
+								if(data.result==0){
+									var url=data.jsonp;
+									Util.getJSON(url,function(data){
+									resolve(data);
+									});
+								}else{
+									reject();
+								}
+							},'json');
 						});
 					}
-
+					*/
+					var getCurChapterContentPromise=function(){}
 					var nextChapter=function(UIcallback){
 						Chapter_id=parseInt(Chapter_id);
 						if(Chapter_id==4)
