@@ -234,7 +234,7 @@
 				position: fixed;
 				z-index: 10002;
 				width: 100%;
-				height: 40%;
+				height: 20%;
 				top: 30%;
 
 			}
@@ -518,13 +518,16 @@
 								Util.getJSON(url,function(data){
 									callback&&callback(data);
 								});
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/gh-pages
 					}
 
 					var getCurChapterContentPromise=function(){
 						return new Promise(function(resolve,reject){
 									//修改地方
-								var url='data/chapterData'+Chapter_id+'.json'
+								var url='data/chapterData'+Chapter_id+'.json';
 								Util.getJSON(url,function(data){
 								resolve(data);
 								});
